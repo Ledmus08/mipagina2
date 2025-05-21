@@ -307,11 +307,11 @@
             envelope: { attack: 0.01, decay: 0.1, sustain: 0.01, release: 0.3 }
         }).toDestination();
 
-        function createImage(url, x, y, speed) {
+        function createImage(url, x, y, speedY) {
             const img = new Image();
             img.src = url;
             img.onload = () => {
-                images.push({ img, x, y, speed, width: 50, height: 50, hit: false });
+                images.push({ img, x, y, speedY, width: 50, height: 50, hit: false });
             };
         }
 
@@ -337,14 +337,12 @@
 "https://cdn.7tv.app/emote/61eca8b87754c6a30f231a8a/4x.avif",
 "https://cdn.7tv.app/emote/620f0a8817a569a30f111a8a/4x.avif",
 "https://cdn.7tv.app/emote/62217a88411885a30f9b1a8a/4x.avif"
-
             ];
             const url = urls[Math.floor(Math.random() * urls.length)];
-            const x = -50;
-            const y = Math.random() * (canvas.height - 100) + 50;
-            const speed = Math.random() * 3 + 1;
-            createImage(url, x, y, speed);
-        }
+            const x = Math.random() * (canvas.width - 50);
+            const y = -50;
+            const speedY = Math.random() * 3 + 1;
+            createImage(url, x, y, speedY);}
 
 function drawHearts() {
     heartsContainer.innerHTML = '';
@@ -400,8 +398,8 @@ function drawHearts() {
             drawCasings();
 
             images.forEach((image, index) => {
-                image.x += image.speed;
-                if (image.x > canvas.width) {
+                image.y += image.speedY;
+                if (image.y > canvas.height) {
                     images.splice(index, 1);
                     if (!image.hit) {
                         hearts--;
@@ -501,10 +499,44 @@ if (Math.random() < 0.7) {
             }, fireRate / 2);
         }
 
+        function handleTouchStart(event) {
+            if (!gameRunning || reloading || ammo <= 0) return;
+            isShooting = true;
+            const rect = canvas.getBoundingClientRect();
+            currentMouseX = event.touches[0].clientX - rect.left;
+            currentMouseY = event.touches[0].clientY - rect.top;
+
+            shoot(currentMouseX, currentMouseY);
+            lastShootTime = Date.now();
+
+            shootInterval = setInterval(() => {
+                if (isShooting && !reloading && ammo > 0 && gameRunning) {
+                    const currentTime = Date.now();
+                    if (currentTime - lastShootTime >= fireRate) {
+                        shoot(currentMouseX, currentMouseY);
+                        lastShootTime = currentTime;
+                    }
+                } else if (ammo <= 0 && hearts > 0 && !reloading) {
+                    startReload();
+                    clearInterval(shootInterval);
+                    isShooting = false;
+                } else if (!gameRunning) {
+                    clearInterval(shootInterval);
+                    isShooting = false;
+                }
+            }, fireRate / 2);
+        }
+
         function handleMouseMove(event) {
             const rect = canvas.getBoundingClientRect();
             currentMouseX = event.clientX - rect.left;
             currentMouseY = event.clientY - rect.top;
+        }
+
+        function handleTouchMove(event) {
+            const rect = canvas.getBoundingClientRect();
+            currentMouseX = event.touches[0].clientX - rect.left;
+            currentMouseY = event.touches[0].clientY - rect.top;
         }
 
         function handleMouseUp() {
@@ -512,7 +544,17 @@ if (Math.random() < 0.7) {
             clearInterval(shootInterval);
         }
 
+        function handleTouchEnd() {
+            isShooting = false;
+            clearInterval(shootInterval);
+        }
+
         function handleMouseOut() {
+            isShooting = false;
+            clearInterval(shootInterval);
+        }
+
+        function handleTouchCancel() {
             isShooting = false;
             clearInterval(shootInterval);
         }
@@ -559,6 +601,12 @@ if (Math.random() < 0.7) {
         canvas.addEventListener('mousemove', handleMouseMove);
         canvas.addEventListener('mouseup', handleMouseUp);
         canvas.addEventListener('mouseout', handleMouseOut);
+
+        canvas.addEventListener('touchstart', handleTouchStart);
+        canvas.addEventListener('touchmove', handleTouchMove);
+        canvas.addEventListener('touchend', handleTouchEnd);
+        canvas.addEventListener('touchcancel', handleTouchCancel);
+
         restartButton.addEventListener('click', restartGame);
 
         drawHearts();

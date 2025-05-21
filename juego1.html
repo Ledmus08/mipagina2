@@ -41,16 +41,28 @@
             order: 2; /* Coloca el canvas en la parte superior visualmente */
         }
 
+#top-ui {
+    position: absolute;
+    top: 20px;
+    left: 50%; /* Agregado */
+    transform: translateX(-50%); /* Agregado */
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 10;
+    color: white;
+    font-size: 16px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 2px solid #000000;
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.993);
+    order: 1; /* Coloca la UI superior debajo del canvas visualmente */
+}
+
         #hearts-container {
-            position: absolute;
-            top: auto; /* Elimina la posición top */
-            bottom: 10px; /* Coloca el contenedor de corazones en la parte inferior */
-            left: 50%;
-            transform: translateX(-50%);
             display: flex;
             gap: 8px;
-            z-index: 10;
-            order: 1; /* Coloca los corazones debajo del canvas visualmente */
         }
 
         .heart {
@@ -68,20 +80,8 @@
         }
 
         #ammo-counter {
-            position: absolute;
-            bottom: auto; /* Elimina la posición bottom */
-            top: 20px; /* Coloca el contador de balas en la parte superior */
-            left: 50%;
-            transform: translateX(-50%);
             color: white;
             font-size: 16px;
-            z-index: 10;
-            padding: 8px 16px;
-            border-radius: 8px;
-            background-color: rgba(0, 0, 0, 0.6);
-            border: 2px solid #000000;
-            box-shadow: 0 0 8px rgba(255, 0, 0, 0.993);
-            order: 1; /* Coloca el contador de balas debajo del canvas visualmente */
         }
 
         #game-over-modal {
@@ -183,29 +183,34 @@
 
         #goal-line {
             position: absolute;
-            top: 0;
-            right: 40px;
-            width: 8px;
-            height: 100%;
-            background: linear-gradient(to bottom, #00ff00, #ffff00, #00ff00);
+            bottom: 10px;
+            left: 10px;
+            width: calc(100% - 20px); /* Ancho con márgenes */
+            height: 8px;
+            background: linear-gradient(to right, #00ff00, #ffff00, #00ff00);
             opacity: 0.6;
-            box-shadow: -3px 0 7px rgba(0, 255, 0, 0.8);
+            box-shadow: 0 -3px 7px rgba(0, 255, 0, 0.8);
+            order: 3; /* Coloca la barra de meta debajo del canvas y la UI superior */
         }
 
         /* Estilos para dispositivos móviles */
         @media (max-width: 600px) {
+            #top-ui {
+                top: 10px;
+                left: 10px;
+                font-size: 14px;
+                padding: 6px 12px;
+                gap: 10px;
+            }
             #hearts-container {
                 font-size: 18px;
                 gap: 5px;
-                bottom: 5px;
             }
             .heart {
                 font-size: 18px;
             }
             #ammo-counter {
                 font-size: 14px;
-                padding: 6px 12px;
-                top: 10px;
             }
             #game-over-content {
                 padding: 20px;
@@ -223,8 +228,10 @@
                 padding: 10px 20px;
             }
             #goal-line {
-                right: 10px;
-                width: 5px;
+                bottom: 5px;
+                left: 5px;
+                width: calc(100% - 10px);
+                height: 5px;
             }
         }
     </style>
@@ -238,14 +245,16 @@
 
     <div class="container">
         <canvas id="game-canvas"></canvas>
-        <div id="hearts-container">
-            <div class="heart"></div>
-            <div class="heart"></div>
-            <div class="heart"></div>
-            <div class="heart"></div>
-            <div class="heart"></div>
+        <div id="top-ui">
+            <div id="hearts-container">
+                <div class="heart"></div>
+                <div class="heart"></div>
+                <div class="heart"></div>
+                <div class="heart"></div>
+                <div class="heart"></div>
+            </div>
+            <div id="ammo-counter">Balas: 30</div>
         </div>
-        <div id="ammo-counter">Balas: 30</div>
          <div id="game-over-modal">
             <div id="game-over-content">
                 <h2 id="game-over-title"> <img src="https://cdn.7tv.app/emote/01GC27DF6G000BVX64F65YV245/4x.avif" alt="Emoji basado" style="height: 40px; vertical-align: middle;"> </h2>
@@ -270,10 +279,14 @@
         const customCursor = document.getElementById('custom-cursor');
         const reloadingModal = document.getElementById('reloading-modal');
         const goalLine = document.getElementById('goal-line');
+        const topUi = document.getElementById('top-ui');
 
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        goalLine.style.height = canvas.height + 'px';
+        goalLine.style.bottom = '10px';
+        goalLine.style.left = '10px';
+        goalLine.style.width = `calc(100% - 20px)`;
+        goalLine.style.height = '8px';
 
         let hearts = 5;
         let ammo = 30;
@@ -342,7 +355,8 @@
             const x = Math.random() * (canvas.width - 50);
             const y = -50;
             const speedY = Math.random() * 3 + 1;
-            createImage(url, x, y, speedY);}
+            createImage(url, x, y, speedY);
+        }
 
 function drawHearts() {
     heartsContainer.innerHTML = '';
@@ -426,7 +440,7 @@ function drawHearts() {
                 }
             });
 
-if (Math.random() < 0.7) {
+if (Math.random() < 0.6) {
     createRandomImage();
 }
 

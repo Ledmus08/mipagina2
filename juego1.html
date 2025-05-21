@@ -195,45 +195,46 @@
 
         /* Estilos para dispositivos móviles */
         @media (max-width: 600px) {
-            #top-ui {
-                top: 10px;
-                left: 10px;
-                font-size: 14px;
-                padding: 6px 12px;
-                gap: 10px;
-            }
-            #hearts-container {
-                font-size: 18px;
-                gap: 5px;
-            }
-            .heart {
-                font-size: 18px;
-            }
-            #ammo-counter {
-                font-size: 14px;
-            }
-            #game-over-content {
-                padding: 20px;
-            }
-            #game-over-title {
-                font-size: 20px;
-                margin-bottom: 10px;
-            }
-            #game-over-text {
-                font-size: 16px;
-                margin-bottom: 15px;
-            }
-            #restart-button {
-                font-size: 16px;
-                padding: 10px 20px;
-            }
-            #goal-line {
-                bottom: 5px;
-                left: 5px;
-                width: calc(100% - 10px);
-                height: 5px;
-            }
-        }
+    #top-ui {
+        top: 10px;
+        left: 50%; /* Agregado para centrar en móviles */
+        transform: translateX(-50%); /* Agregado para centrar en móviles */
+        font-size: 14px;
+        padding: 6px 12px;
+        gap: 10px;
+    }
+    #hearts-container {
+        font-size: 18px;
+        gap: 5px;
+    }
+    .heart {
+        font-size: 18px;
+    }
+    #ammo-counter {
+        font-size: 14px;
+    }
+    #game-over-content {
+        padding: 20px;
+    }
+    #game-over-title {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+    #game-over-text {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+    #restart-button {
+        font-size: 16px;
+        padding: 10px 20px;
+    }
+    #goal-line {
+        bottom: 5px;
+        left: 5px;
+        width: calc(100% - 10px);
+        height: 5px;
+    }
+}
     </style>
 </head>
 <body>
